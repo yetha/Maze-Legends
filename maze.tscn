@@ -1,0 +1,496 @@
+[gd_scene load_steps=27 format=2]
+
+[ext_resource path="res://scripts/maze.gd" type="Script" id=1]
+[ext_resource path="res://textures/loading.png" type="Texture" id=2]
+[ext_resource path="res://scripts/player.gd" type="Script" id=3]
+[ext_resource path="res://scripts/maze2d.gd" type="Script" id=4]
+[ext_resource path="res://scripts/path.gd" type="Script" id=5]
+[ext_resource path="res://icon.png" type="Texture" id=6]
+[ext_resource path="res://resources/theme.tres" type="Theme" id=7]
+[ext_resource path="res://textures/pause-icon-18-128.png" type="Texture" id=8]
+[ext_resource path="res://scripts/pausepopup.gd" type="Script" id=9]
+[ext_resource path="res://scripts/levelui.gd" type="Script" id=10]
+[ext_resource path="res://clearpopup.gd" type="Script" id=11]
+[ext_resource path="res://popups.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scripts/map.gd" type="Script" id=13]
+
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="PrismMesh" id=2]
+
+[sub_resource type="PlaneMesh" id=3]
+
+[sub_resource type="BoxShape" id=4]
+
+[sub_resource type="BoxShape" id=5]
+
+[sub_resource type="Animation" id=6]
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("TextureRect:rect_rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 360.0 ]
+}
+
+[sub_resource type="StyleBoxFlat" id=7]
+
+[sub_resource type="DynamicFontData" id=8]
+font_path = "res://resources/SourceSansPro-Regular.otf"
+
+[sub_resource type="DynamicFont" id=9]
+size = 36
+font_data = SubResource( 8 )
+
+[sub_resource type="GDScript" id=10]
+script/source = "extends Label
+
+
+var engine_s = Engine
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta):
+	text = str(engine_s.get_frames_per_second())
+	pass
+"
+
+[sub_resource type="ViewportTexture" id=11]
+viewport_path = NodePath("MapVP")
+
+[sub_resource type="ViewportTexture" id=12]
+viewport_path = NodePath("MapVP")
+
+[sub_resource type="ViewportTexture" id=13]
+viewport_path = NodePath("MapVP")
+
+[node name="GameWorld" type="Spatial"]
+script = ExtResource( 1 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Maze" type="Spatial" parent="."]
+
+[node name="Player" type="Spatial" parent="."]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0 )
+script = ExtResource( 3 )
+
+[node name="Camera" type="Camera" parent="Player"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 3 )
+current = true
+
+[node name="PArea" type="Area" parent="Player"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.31134e-07, 1, -3 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Player/PArea"]
+shape = SubResource( 1 )
+
+[node name="Tween" type="Tween" parent="Player"]
+
+[node name="MeshInstance" type="MeshInstance" parent="Player"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 4.37114e-08, 0, -1 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="Ground" type="MeshInstance" parent="."]
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="Finish" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Finish"]
+shape = SubResource( 4 )
+
+[node name="Colliders" type="Spatial" parent="."]
+
+[node name="StaticBody" type="StaticBody" parent="Colliders"]
+
+[node name="CollisionShape" type="CollisionShape" parent="Colliders/StaticBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0 )
+shape = SubResource( 5 )
+
+[node name="StaticBody2" type="StaticBody" parent="Colliders"]
+
+[node name="CollisionShape" type="CollisionShape" parent="Colliders/StaticBody2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0 )
+shape = SubResource( 5 )
+
+[node name="StaticBody3" type="StaticBody" parent="Colliders"]
+
+[node name="CollisionShape" type="CollisionShape" parent="Colliders/StaticBody3"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0 )
+shape = SubResource( 5 )
+
+[node name="MapVP" type="Viewport" parent="."]
+pause_mode = 2
+render_target_v_flip = true
+
+[node name="World2D" type="Node2D" parent="MapVP"]
+script = ExtResource( 4 )
+
+[node name="Maze" type="Node2D" parent="MapVP/World2D"]
+
+[node name="Locator" type="Sprite" parent="MapVP/World2D"]
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 6 )
+
+[node name="Path" type="Line2D" parent="MapVP/World2D"]
+script = ExtResource( 5 )
+
+[node name="Tween" type="Tween" parent="MapVP/World2D/Path"]
+
+[node name="OverviewCamera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 27, 90, 0 )
+
+[node name="UI" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 7 )
+script = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Loading" type="ColorRect" parent="UI"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="UI/Loading"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -25.0
+margin_top = -25.0
+margin_right = 25.0
+margin_bottom = 25.0
+rect_rotation = 360.0
+rect_pivot_offset = Vector2( 25, 25 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/Loading"]
+autoplay = "loading"
+anims/loading = SubResource( 6 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI"]
+anchor_right = 1.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 0, 80 )
+custom_constants/separation = 20
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Pause" type="Button" parent="UI/HBoxContainer"]
+margin_left = 250.0
+margin_top = 10.0
+margin_right = 310.0
+margin_bottom = 70.0
+rect_min_size = Vector2( 60, 60 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+icon = ExtResource( 8 )
+expand_icon = true
+
+[node name="fps label" type="Label" parent="UI/HBoxContainer"]
+margin_left = 330.0
+margin_top = 10.0
+margin_right = 470.0
+margin_bottom = 70.0
+rect_min_size = Vector2( 140, 60 )
+custom_styles/normal = SubResource( 7 )
+custom_fonts/font = SubResource( 9 )
+align = 1
+valign = 1
+script = SubResource( 10 )
+
+[node name="Map" type="TextureRect" parent="UI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -280.0
+margin_top = -280.0
+margin_right = 280.0
+margin_bottom = 280.0
+rect_min_size = Vector2( 560, 560 )
+texture = SubResource( 11 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PausePopup" type="PopupPanel" parent="UI"]
+pause_mode = 2
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -280.0
+margin_top = -111.0
+margin_right = 280.0
+margin_bottom = 111.0
+rect_min_size = Vector2( 560, 0 )
+mouse_filter = 1
+size_flags_horizontal = 4
+size_flags_vertical = 4
+popup_exclusive = true
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="VBoxContainer" parent="UI/PausePopup"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -4.0
+margin_bottom = -4.0
+size_flags_vertical = 0
+
+[node name="Label" type="Label" parent="UI/PausePopup/HBoxContainer"]
+margin_right = 552.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 0, 40 )
+mouse_filter = 1
+size_flags_horizontal = 5
+text = "Paused"
+align = 1
+valign = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/PausePopup/HBoxContainer"]
+margin_top = 44.0
+margin_right = 552.0
+margin_bottom = 214.0
+size_flags_horizontal = 5
+custom_constants/separation = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/PausePopup/HBoxContainer/VBoxContainer"]
+margin_right = 552.0
+margin_bottom = 80.0
+size_flags_horizontal = 5
+alignment = 1
+
+[node name="Continue" type="Button" parent="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer"]
+margin_right = 181.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 0, 80 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 5
+text = "Continue"
+clip_text = true
+
+[node name="Restart" type="Button" parent="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer"]
+margin_left = 185.0
+margin_right = 366.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 0, 80 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Restart"
+clip_text = true
+
+[node name="Skip" type="Button" parent="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer"]
+margin_left = 370.0
+margin_right = 552.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 0, 80 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Skip"
+clip_text = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/PausePopup/HBoxContainer/VBoxContainer"]
+margin_top = 90.0
+margin_right = 552.0
+margin_bottom = 170.0
+size_flags_horizontal = 5
+alignment = 1
+
+[node name="Home" type="Button" parent="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2"]
+margin_left = 114.0
+margin_right = 274.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 160, 80 )
+focus_mode = 0
+mouse_filter = 1
+enabled_focus_mode = 0
+text = "Home"
+clip_text = true
+
+[node name="Settings" type="Button" parent="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2"]
+margin_left = 278.0
+margin_right = 438.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 160, 80 )
+focus_mode = 0
+mouse_filter = 1
+enabled_focus_mode = 0
+text = "Options"
+clip_text = true
+
+[node name="ClearPopup" type="PopupPanel" parent="UI"]
+pause_mode = 2
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -280.0
+margin_top = -400.0
+margin_right = 280.0
+margin_bottom = 400.0
+rect_min_size = Vector2( 560, 800 )
+mouse_filter = 1
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxCont" type="VBoxContainer" parent="UI/ClearPopup"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 556.0
+margin_bottom = 796.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+custom_constants/separation = 20
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="UI/ClearPopup/VBoxCont"]
+margin_top = 34.0
+margin_right = 552.0
+margin_bottom = 73.0
+mouse_filter = 1
+text = "Cleared"
+align = 1
+
+[node name="ClearedMap" type="TextureRect" parent="UI/ClearPopup/VBoxCont"]
+margin_left = 36.0
+margin_top = 93.0
+margin_right = 516.0
+margin_bottom = 573.0
+rect_min_size = Vector2( 480, 480 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = SubResource( 12 )
+expand = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/ClearPopup/VBoxCont"]
+margin_top = 593.0
+margin_right = 552.0
+margin_bottom = 757.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/ClearPopup/VBoxCont/VBoxContainer"]
+margin_right = 552.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+alignment = 1
+
+[node name="Replay" type="Button" parent="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer"]
+margin_left = 10.0
+margin_right = 170.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 160, 80 )
+mouse_filter = 1
+size_flags_horizontal = 6
+text = "Restart"
+
+[node name="Home" type="Button" parent="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer"]
+margin_left = 195.0
+margin_right = 355.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 160, 80 )
+mouse_filter = 1
+size_flags_horizontal = 6
+text = "Home"
+
+[node name="Next" type="Button" parent="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer"]
+margin_left = 381.0
+margin_right = 541.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 160, 80 )
+focus_mode = 0
+mouse_filter = 1
+size_flags_horizontal = 6
+enabled_focus_mode = 0
+text = "Next"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/ClearPopup/VBoxCont/VBoxContainer"]
+margin_top = 84.0
+margin_right = 552.0
+margin_bottom = 164.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+alignment = 1
+
+[node name="Share" type="Button" parent="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer2"]
+margin_left = 196.0
+margin_right = 356.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 160, 80 )
+mouse_filter = 1
+size_flags_horizontal = 6
+text = "Share"
+
+[node name="Popups" parent="UI" instance=ExtResource( 12 )]
+margin_top = -1.0
+margin_bottom = -1.0
+
+[node name="testviewmap" type="TextureRect" parent="UI"]
+visible = false
+margin_right = 256.0
+margin_bottom = 256.0
+texture = SubResource( 13 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="level_cleared" from="." to="." method="_on_level_cleared"]
+[connection signal="level_cleared" from="." to="UI/ClearPopup" method="_on_level_cleared"]
+[connection signal="level_loaded" from="." to="UI" method="_on_level_loaded"]
+[connection signal="tween_completed" from="Player/Tween" to="Player" method="_on_Tween_tween_completed"]
+[connection signal="tween_started" from="Player/Tween" to="Player" method="_on_Tween_tween_started"]
+[connection signal="area_entered" from="Finish" to="." method="_on_Finish_area_entered"]
+[connection signal="pressed" from="UI/HBoxContainer/Pause" to="UI/PausePopup" method="_on_Pause_pressed"]
+[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer/Continue" to="UI/PausePopup" method="_on_Continue_pressed"]
+[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer/Restart" to="UI/PausePopup" method="_on_Restart_pressed"]
+[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer/Skip" to="UI/PausePopup" method="_on_Skip_pressed"]
+[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Home" to="UI/PausePopup" method="_on_Home_pressed"]
+[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Home" to="UI" method="_on_Home_pressed"]
+[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Settings" to="UI/PausePopup" method="_on_Settings_pressed"]
+[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Settings" to="UI" method="_on_Settings_pressed"]
+[connection signal="pressed" from="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer/Replay" to="UI/ClearPopup" method="_on_Replay_pressed"]
+[connection signal="pressed" from="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer/Home" to="UI/ClearPopup" method="_on_Home_pressed"]
+[connection signal="pressed" from="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer/Home" to="UI" method="_on_Home_pressed"]
+[connection signal="pressed" from="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer/Next" to="UI/ClearPopup" method="_on_Next_pressed"]

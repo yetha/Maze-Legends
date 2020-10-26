@@ -1,15 +1,12 @@
 extends Control
 
-
 onready var achvments = $AchievemntsPopup
 onready var settings = $Popups/Settings
 onready var quit = $QuitPopup
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
-
 
 
 func _on_Play_pressed():
@@ -44,4 +41,14 @@ func _on_Confirm_pressed():
 
 func _on_Ach_OK_pressed():
 	achvments.hide()
+	pass # Replace with function body.
+
+
+func _on_Ach_about_to_show():
+	var l = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/HBoxContainer/Label
+	var percent = 0
+	l.text = str(main.data["solves"]) + " - "
+	if main.data["levels"] > 0:
+		percent = stepify(float(main.data["solves"]) / float(main.data["levels"]), 0.01) * 100
+	l.text += str(percent) + "%"
 	pass # Replace with function body.

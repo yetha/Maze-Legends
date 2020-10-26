@@ -1,6 +1,5 @@
 extends Control
 
-
 onready var about = $About
 onready var settings = $Settings
 onready var tutorial = $Tutorial

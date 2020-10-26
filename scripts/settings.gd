@@ -16,6 +16,6 @@ func _on_SettingsPopup_popup_hide():
 	main.settings["ads"] = ads.pressed
 	main.settings["music"] = music.pressed
 	main.settings["sound"] = sound.pressed
-#	main.save_game_data()
+	main.save_game_data()
 	pass
 

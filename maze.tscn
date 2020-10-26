@@ -10,9 +10,10 @@
 [ext_resource path="res://textures/pause-icon-18-128.png" type="Texture" id=8]
 [ext_resource path="res://scripts/pausepopup.gd" type="Script" id=9]
 [ext_resource path="res://scripts/levelui.gd" type="Script" id=10]
-[ext_resource path="res://clearpopup.gd" type="Script" id=11]
+[ext_resource path="res://scripts/clearpopup.gd" type="Script" id=11]
 [ext_resource path="res://popups.tscn" type="PackedScene" id=12]
 [ext_resource path="res://scripts/map.gd" type="Script" id=13]
+[ext_resource path="res://resources/PublicSans-Regular.ttf" type="DynamicFontData" id=15]
 
 [sub_resource type="BoxShape" id=1]
 
@@ -39,16 +40,13 @@ tracks/0/keys = {
 "values": [ 0.0, 360.0 ]
 }
 
-[sub_resource type="StyleBoxFlat" id=7]
+[sub_resource type="DynamicFont" id=7]
+size = 50
+font_data = ExtResource( 15 )
 
-[sub_resource type="DynamicFontData" id=8]
-font_path = "res://resources/SourceSansPro-Regular.otf"
+[sub_resource type="StyleBoxFlat" id=8]
 
-[sub_resource type="DynamicFont" id=9]
-size = 36
-font_data = SubResource( 8 )
-
-[sub_resource type="GDScript" id=10]
+[sub_resource type="GDScript" id=9]
 script/source = "extends Label
 
 
@@ -66,13 +64,13 @@ func _process(_delta):
 	pass
 "
 
+[sub_resource type="ViewportTexture" id=10]
+viewport_path = NodePath("MapVP")
+
 [sub_resource type="ViewportTexture" id=11]
 viewport_path = NodePath("MapVP")
 
 [sub_resource type="ViewportTexture" id=12]
-viewport_path = NodePath("MapVP")
-
-[sub_resource type="ViewportTexture" id=13]
 viewport_path = NodePath("MapVP")
 
 [node name="GameWorld" type="Spatial"]
@@ -134,6 +132,9 @@ shape = SubResource( 5 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0 )
 shape = SubResource( 5 )
 
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
 [node name="MapVP" type="Viewport" parent="."]
 pause_mode = 2
 render_target_v_flip = true
@@ -144,6 +145,7 @@ script = ExtResource( 4 )
 [node name="Maze" type="Node2D" parent="MapVP/World2D"]
 
 [node name="Locator" type="Sprite" parent="MapVP/World2D"]
+visible = false
 scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 6 )
 
@@ -156,8 +158,10 @@ script = ExtResource( 5 )
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 27, 90, 0 )
 
 [node name="UI" type="Control" parent="."]
+pause_mode = 2
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 theme = ExtResource( 7 )
 script = ExtResource( 10 )
 __meta__ = {
@@ -196,16 +200,26 @@ anims/loading = SubResource( 6 )
 anchor_right = 1.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 0, 80 )
-custom_constants/separation = 20
+custom_constants/separation = 80
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Time" type="Label" parent="UI/HBoxContainer"]
+margin_left = 120.0
+margin_right = 240.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 120, 80 )
+custom_fonts/font = SubResource( 7 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+align = 1
+valign = 1
+
 [node name="Pause" type="Button" parent="UI/HBoxContainer"]
-margin_left = 250.0
+margin_left = 320.0
 margin_top = 10.0
-margin_right = 310.0
+margin_right = 380.0
 margin_bottom = 70.0
 rect_min_size = Vector2( 60, 60 )
 size_flags_horizontal = 4
@@ -214,16 +228,15 @@ icon = ExtResource( 8 )
 expand_icon = true
 
 [node name="fps label" type="Label" parent="UI/HBoxContainer"]
-margin_left = 330.0
+margin_left = 460.0
 margin_top = 10.0
-margin_right = 470.0
+margin_right = 600.0
 margin_bottom = 70.0
 rect_min_size = Vector2( 140, 60 )
-custom_styles/normal = SubResource( 7 )
-custom_fonts/font = SubResource( 9 )
+custom_styles/normal = SubResource( 8 )
 align = 1
 valign = 1
-script = SubResource( 10 )
+script = SubResource( 9 )
 
 [node name="Map" type="TextureRect" parent="UI"]
 anchor_left = 0.5
@@ -235,8 +248,24 @@ margin_top = -280.0
 margin_right = 280.0
 margin_bottom = 280.0
 rect_min_size = Vector2( 560, 560 )
-texture = SubResource( 11 )
+texture = SubResource( 10 )
+expand = true
 script = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MapButton" type="Button" parent="UI"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -80.0
+margin_top = -80.0
+margin_right = 80.0
+rect_min_size = Vector2( 160, 80 )
+focus_mode = 0
+text = "START"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -294,18 +323,18 @@ size_flags_horizontal = 5
 alignment = 1
 
 [node name="Continue" type="Button" parent="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer"]
-margin_right = 181.0
+margin_left = 196.0
+margin_right = 356.0
 margin_bottom = 80.0
-rect_min_size = Vector2( 0, 80 )
+rect_min_size = Vector2( 160, 80 )
 mouse_filter = 1
-size_flags_horizontal = 3
-size_flags_vertical = 5
 text = "Continue"
 clip_text = true
 
 [node name="Restart" type="Button" parent="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer"]
-margin_left = 185.0
-margin_right = 366.0
+visible = false
+margin_left = 278.0
+margin_right = 552.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 0, 80 )
 mouse_filter = 1
@@ -402,7 +431,7 @@ margin_bottom = 573.0
 rect_min_size = Vector2( 480, 480 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = SubResource( 12 )
+texture = SubResource( 11 )
 expand = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/ClearPopup/VBoxCont"]
@@ -424,7 +453,7 @@ margin_bottom = 80.0
 rect_min_size = Vector2( 160, 80 )
 mouse_filter = 1
 size_flags_horizontal = 6
-text = "Restart"
+text = "Replay"
 
 [node name="Home" type="Button" parent="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer"]
 margin_left = 195.0
@@ -471,26 +500,29 @@ margin_bottom = -1.0
 visible = false
 margin_right = 256.0
 margin_bottom = 256.0
-texture = SubResource( 13 )
+texture = SubResource( 12 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="level_cleared" from="." to="." method="_on_level_cleared"]
-[connection signal="level_cleared" from="." to="UI/ClearPopup" method="_on_level_cleared"]
+[connection signal="level_ended" from="." to="MapVP/World2D/Path" method="_on_level_ended"]
+[connection signal="level_ended" from="." to="UI" method="_on_level_ended"]
+[connection signal="level_ended" from="." to="UI/ClearPopup" method="_on_level_ended"]
 [connection signal="level_loaded" from="." to="UI" method="_on_level_loaded"]
 [connection signal="tween_completed" from="Player/Tween" to="Player" method="_on_Tween_tween_completed"]
 [connection signal="tween_started" from="Player/Tween" to="Player" method="_on_Tween_tween_started"]
 [connection signal="area_entered" from="Finish" to="." method="_on_Finish_area_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
 [connection signal="pressed" from="UI/HBoxContainer/Pause" to="UI/PausePopup" method="_on_Pause_pressed"]
+[connection signal="pressed" from="UI/MapButton" to="UI/Map" method="_on_MapButton_pressed"]
+[connection signal="about_to_show" from="UI/PausePopup" to="UI/Map" method="_on_PausePopup_about_to_show"]
+[connection signal="popup_hide" from="UI/PausePopup" to="UI/Map" method="_on_PausePopup_popup_hide"]
 [connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer/Continue" to="UI/PausePopup" method="_on_Continue_pressed"]
 [connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer/Restart" to="UI/PausePopup" method="_on_Restart_pressed"]
 [connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer/Skip" to="UI/PausePopup" method="_on_Skip_pressed"]
-[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Home" to="UI/PausePopup" method="_on_Home_pressed"]
 [connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Home" to="UI" method="_on_Home_pressed"]
-[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Settings" to="UI/PausePopup" method="_on_Settings_pressed"]
 [connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Settings" to="UI" method="_on_Settings_pressed"]
+[connection signal="pressed" from="UI/PausePopup/HBoxContainer/VBoxContainer/HBoxContainer2/Settings" to="UI/PausePopup" method="_on_Settings_pressed"]
 [connection signal="pressed" from="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer/Replay" to="UI/ClearPopup" method="_on_Replay_pressed"]
-[connection signal="pressed" from="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer/Home" to="UI/ClearPopup" method="_on_Home_pressed"]
 [connection signal="pressed" from="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer/Home" to="UI" method="_on_Home_pressed"]
 [connection signal="pressed" from="UI/ClearPopup/VBoxCont/VBoxContainer/HBoxContainer/Next" to="UI/ClearPopup" method="_on_Next_pressed"]

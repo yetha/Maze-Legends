@@ -12,6 +12,7 @@ var ohwalls = []
 var ovwalls = []
 var path = []
 var maze_loops = []
+var try_success = false
 var rng = RandomNumberGenerator.new()
 var st_thread = Thread.new()
 
@@ -22,6 +23,8 @@ onready var om2d = $MapVP/World2D
 onready var line = $MapVP/World2D/Path
 onready var fin_area = $Finish
 onready var loading_ui = $UI/Loading
+onready var map = $UI/Map
+onready var timer = $Timer
 
 
 onready var wall = preload("res://wall.tscn")
@@ -29,39 +32,44 @@ onready var wall = preload("res://wall.tscn")
 #onready var hedge = preload("res://resources/woodblock.mesh")
 
 signal level_loaded
-signal level_cleared
+signal level_ended
 
 
 func _ready():
 	loading_ui.show()
-	st_thread.start(self, "starting", null, 1)
+	starting(null)
+#	st_thread.start(self, "starting", null, 1)
 	pass
 
 
 func starting(_userdata):
-	if not main.unclrd_level["exists"]:
+	if not main.current_level["exists"]:
 		rng.randomize()
-		main.unclrd_level["exists"] = true
-		main.unclrd_level["seed"] = rng.seed
-		main.unclrd_level["size"] = main.size
+		main.current_level["exists"] = true
+		main.current_level["seed"] = rng.seed
+		main.current_level["size"] = main.size
+		main.data["levels"] += 1
 	else:
-		rng.seed = main.unclrd_level["seed"]
+		rng.seed = main.current_level["seed"]
 	draw_grid()
 	def_maze()
 	build_maze()
+	timer.wait_time = maze_width * maze_width
 	player.starting()
 	om2d.starting()
+	map.starting()
 	call_deferred("join_thread")
 	pass
 
 
 func join_thread():
-	st_thread.wait_to_finish()
+#	st_thread.wait_to_finish()
 	main.save_game_data()
 	emit_signal("level_loaded")
 
 
 func new():
+	main.wipe_current_level()
 	unvisited.clear()
 	hwalls.clear()
 	vwalls.clear()
@@ -69,6 +77,7 @@ func new():
 	ovwalls.clear()
 	path.clear()
 	maze_loops.clear()
+	try_success = false
 	get_child(0).get_child(0).queue_free()
 	om2d.get_child(0).get_child(0).queue_free()
 	line.get_child(0).stop_all()
@@ -78,10 +87,14 @@ func new():
 
 
 func restart():
+	loading_ui.show()
 	path.clear()
 	player.starting()
 	line.get_child(0).stop_all()
 	line.points = PoolVector2Array([])
+	try_success = false
+	map.starting()
+	emit_signal("level_loaded")
 	pass
 
 
@@ -114,8 +127,9 @@ func draw_grid():
 
 
 func def_maze():
-	var current = Vector2(0, maze_width / 2)
+	var current = Vector2(maze_width - 1, maze_width - 1)
 	unvisited.erase(current)
+	print(current)
 	var stack = []
 	while not unvisited.empty():
 		var nbrs = check_nbrs(current)
@@ -201,18 +215,19 @@ func player_moved(location):
 	pass
 
 
-func _on_level_cleared():
-	line.draw_path()
-	pass # Replace with function body.
-
-
 func _on_Finish_area_entered(area):
 	if area.name == "PArea":
 		yield(get_tree().create_timer(1), "timeout")
-		emit_signal("level_cleared")
+		try_success = true
+		emit_signal("level_ended")
 	pass # Replace with function body.
 
 
 #func _on_level_loaded():
 #	loading_ui.hide()
 #	pass # Replace with function body.
+
+
+func _on_Timer_timeout():
+	emit_signal("level_ended")
+	pass # Replace with function body.

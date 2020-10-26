@@ -1,56 +1,76 @@
 extends TextureRect
 
 var tween = Tween.new()
-var map_visible = false
+var b_timer = Timer.new()
+var showing = true
 var visible_value
 var invisible_value
 
-var initial_pos = Vector2(0, 0)
-var min_dist = 100
+onready var tree = get_tree()
+onready var button = get_node("../MapButton")
 
 #onready var sound = $SwipeSound
 
 
 func _ready():
 	add_child(tween)
-
-
-func _notification(what):
-	if what == NOTIFICATION_PAUSED:
-		hide()
-	if what == NOTIFICATION_UNPAUSED:
-		show()
+	add_child(b_timer)
+	b_timer.one_shot = true
+	b_timer.pause_mode = PAUSE_MODE_STOP
+	b_timer.connect("timeout", self, "_on_timer_timeout")
 	pass
 
 
-func _unhandled_input(event):
-	if event is InputEventKey:
-		if event.pressed and event.scancode == KEY_DOWN:
-			toggle_map(not map_visible)
-	if not event is InputEventScreenTouch:
-		return
-	if event.index != 0:
-		return
-	if event is InputEventScreenTouch and event.is_pressed():
-		initial_pos = event.position
-	elif event is InputEventScreenTouch and not event.is_pressed():
-		var swipe_vec = event.position - initial_pos
-		var vec2_aspct = abs(swipe_vec.aspect())
-		if vec2_aspct < 0.5:
-			if swipe_vec.y < -min_dist:
-				toggle_map(true)
-			elif swipe_vec.y > min_dist:
-				toggle_map(false)
+func _process(_delta):
+	if button.disabled:
+		button.text = "MAP (" + str(int(b_timer.time_left)) + ")"
 	pass
 
 
+func starting():
+	rect_position.y = visible_value
+	showing = true
+	b_timer.stop()
+	b_timer.wait_time = 7.5
+	button.disabled = false
+	button.text = "START"
+	button.show()
+	button.connect("pressed", get_parent(),"_on_MapButton_pressed", [], 4)
 
-func toggle_map(visibility, time=0.5):
+
+func toggle_map():
 	if tween.is_active():
 		return
-	var new_value = invisible_value
-	if visibility:
-		new_value = visible_value
-	tween.interpolate_property(self, "rect_position:y", null, new_value, time, 5, 1)
+	var value = visible_value
+	if showing:
+		value = invisible_value
+		button.disabled = true
+		b_timer.start()
+	showing = not showing
+	tween.interpolate_property(self, "rect_position:y", null, value, 0.5, 5, 1)
 	tween.start()
 #	sound.play()
+
+
+func _on_MapButton_pressed():
+	tree.paused = false
+	toggle_map()
+	button.text = "MAP"
+
+
+func _on_timer_timeout():
+	button.disabled = false
+	button.text = "MAP"
+	pass
+
+
+func _on_PausePopup_about_to_show():
+	hide()
+	button.hide()
+	pass # Replace with function body.
+
+
+func _on_PausePopup_popup_hide():
+	show()
+	button.show()
+	pass # Replace with function body.

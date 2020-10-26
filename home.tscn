@@ -95,7 +95,7 @@ __meta__ = {
 
 [node name="Label" type="Label" parent="QuitPopup/VBoxContainer"]
 margin_right = 324.0
-margin_bottom = 14.0
+margin_bottom = 39.0
 mouse_filter = 1
 size_flags_vertical = 1
 text = "Quit?"
@@ -103,9 +103,9 @@ align = 1
 valign = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="QuitPopup/VBoxContainer"]
-margin_top = 34.0
+margin_top = 59.0
 margin_right = 324.0
-margin_bottom = 114.0
+margin_bottom = 139.0
 alignment = 1
 
 [node name="Cancel" type="Button" parent="QuitPopup/VBoxContainer/HBoxContainer"]
@@ -200,7 +200,7 @@ rect_min_size = Vector2( 0, 20 )
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 1
-text = "512"
+text = "15 - 75%"
 align = 1
 valign = 1
 
@@ -293,4 +293,5 @@ text = "OK"
 [connection signal="pressed" from="VBoxContainer/Quit" to="." method="_on_Quit_pressed"]
 [connection signal="pressed" from="QuitPopup/VBoxContainer/HBoxContainer/Cancel" to="." method="_on_Cancel_pressed"]
 [connection signal="pressed" from="QuitPopup/VBoxContainer/HBoxContainer/Confirm" to="." method="_on_Confirm_pressed"]
+[connection signal="about_to_show" from="AchievemntsPopup" to="." method="_on_Ach_about_to_show"]
 [connection signal="pressed" from="AchievemntsPopup/VBoxContainer/OK" to="." method="_on_Ach_OK_pressed"]

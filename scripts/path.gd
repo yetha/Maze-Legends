@@ -32,3 +32,8 @@ func move_path(value):
 		add_point(new_point)
 		if idx < path_size: add_point(new_point)
 	prev_idx = idx
+
+
+func _on_level_ended():
+	draw_path()
+	pass # Replace with function body.

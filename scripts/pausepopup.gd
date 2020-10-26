@@ -1,7 +1,7 @@
 extends PopupPanel
 
 onready var tree = get_tree()
-onready var levelui = get_parent()
+onready var button = $"../HBoxContainer/Pause"
 
 
 func _notification(what):
@@ -20,6 +20,7 @@ func _notification(what):
 func _on_Pause_pressed():
 	tree.paused = true
 	main.state = main.states.PAUSED
+	button.hide()
 	popup_centered()
 	pass # Replace with function body.
 
@@ -27,31 +28,32 @@ func _on_Pause_pressed():
 func _on_Continue_pressed():
 	tree.paused = false
 	main.state = main.states.PLAYING
+	button.show()
 	hide()
 	pass # Replace with function body.
 
 
 func _on_Restart_pressed():
 	tree.paused = false
+	main.current_level["fails"] += 1
 	main.state = main.states.PLAYING
-	hide()
 	owner.restart()
+	hide()
 	pass # Replace with function body.
 
 
 func _on_Skip_pressed():
 	tree.paused = false
 	main.state = main.states.PLAYING
-	hide()
-	main.wipe_unclrd_level()
 	owner.new()
-	pass # Replace with function body.
-
-
-func _on_Home_pressed():
-	tree.paused = false
 	hide()
 	pass # Replace with function body.
+#
+#
+#func _on_Home_pressed():
+#	tree.paused = false
+#	hide()
+#	pass # Replace with function body.
 
 
 func _on_Settings_pressed():

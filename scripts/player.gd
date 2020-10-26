@@ -1,6 +1,6 @@
 extends Spatial
 
-var can_turn = false
+#var can_turn = false
 var tween_going = false
 var scnd_ani = false
 var scnd_way
@@ -11,6 +11,7 @@ enum {FORWARD, LEFT, RIGHT}
 
 onready var tween = $Tween
 onready var area = $PArea
+onready var map = $"../UI/Map"
 #onready var sound = $MvmntSwipe
 onready var step = owner.step
 onready var path = owner.path
@@ -25,29 +26,24 @@ func starting():
 	rotation.y = 0
 	translation = Vector3((maze_width / 2 + 0.5) * step, 0, (maze_width + 0.5) * step)
 	owner.player_moved(Vector2(translation.x, translation.z))
+	set_process_unhandled_input(true)
 	tween_going = false
 	scnd_ani = false
 	tween.stop_all()
 
 
-func _input(_event):
-	if path.size() > 1:
-		can_turn = true
-		set_process_input(false)
-	pass
-
-
 func _unhandled_input(event):
+	if map.showing:
+		return
 	if event is InputEventKey:
 		if event.pressed:
 			var p_key = event.scancode
 			if p_key == KEY_UP:
 				animate(FORWARD)
-			elif can_turn:
-				if p_key == KEY_LEFT:
-					animate(LEFT)
-				elif p_key == KEY_RIGHT:
-					animate(RIGHT)
+			elif p_key == KEY_LEFT:
+				animate(LEFT)
+			elif p_key == KEY_RIGHT:
+				animate(RIGHT)
 	if not event is InputEventScreenTouch:
 		return
 	if event.index != 0:
@@ -56,15 +52,15 @@ func _unhandled_input(event):
 		initial_pos = event.position
 	elif event is InputEventScreenTouch and not event.is_pressed():
 		var swipe_vec = event.position - initial_pos
-		if abs(swipe_vec.x) < 10 and abs(swipe_vec.y) < 10:
+		if abs(swipe_vec.x) < 10 and abs(swipe_vec.y) < 20:
 			animate(FORWARD)
-		elif can_turn:
-			var vec2_aspct = abs(swipe_vec.aspect())
-			if vec2_aspct > 2:
-				if swipe_vec.x > min_dist:
-					animate(RIGHT)
-				elif swipe_vec.x < -min_dist:
-					animate(LEFT)
+			return
+		var vec2_aspct = abs(swipe_vec.aspect())
+		if vec2_aspct > 2:
+			if swipe_vec.x > min_dist:
+				animate(RIGHT)
+			elif swipe_vec.x < -min_dist:
+				animate(LEFT)
 
 
 func can_movef():
@@ -109,4 +105,3 @@ func _on_Tween_tween_completed(_object, _key):
 func _on_Tween_tween_started(_object, _key):
 #	tween_going = true
 	pass
-

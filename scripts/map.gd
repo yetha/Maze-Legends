@@ -56,6 +56,7 @@ func _on_MapButton_pressed():
 	tree.paused = false
 	toggle_map()
 	button.text = "MAP"
+	main.state = main.states.PLAYING
 
 
 func _on_timer_timeout():

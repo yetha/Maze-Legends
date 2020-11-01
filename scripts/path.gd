@@ -34,6 +34,6 @@ func move_path(value):
 	prev_idx = idx
 
 
-func _on_level_ended():
+func _on_maze_ended():
 	draw_path()
 	pass # Replace with function body.

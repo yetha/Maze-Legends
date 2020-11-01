@@ -44,23 +44,23 @@ func _unhandled_input(event):
 				animate(LEFT)
 			elif p_key == KEY_RIGHT:
 				animate(RIGHT)
-	if not event is InputEventScreenTouch:
-		return
-	if event.index != 0:
-		return
-	if event is InputEventScreenTouch and event.is_pressed():
-		initial_pos = event.position
-	elif event is InputEventScreenTouch and not event.is_pressed():
-		var swipe_vec = event.position - initial_pos
-		if abs(swipe_vec.x) < 10 and abs(swipe_vec.y) < 20:
-			animate(FORWARD)
-			return
-		var vec2_aspct = abs(swipe_vec.aspect())
-		if vec2_aspct > 2:
-			if swipe_vec.x > min_dist:
-				animate(RIGHT)
-			elif swipe_vec.x < -min_dist:
-				animate(LEFT)
+#	if not event is InputEventScreenTouch:
+#		return
+#	if event.index != 0:
+#		return
+#	if event is InputEventScreenTouch and event.is_pressed():
+#		initial_pos = event.position
+#	elif event is InputEventScreenTouch and not event.is_pressed():
+#		var swipe_vec = event.position - initial_pos
+#		if abs(swipe_vec.x) < 10 and abs(swipe_vec.y) < 20:
+#			animate(FORWARD)
+#			return
+#		var vec2_aspct = abs(swipe_vec.aspect())
+#		if vec2_aspct > 2:
+#			if swipe_vec.x > min_dist:
+#				animate(RIGHT)
+#			elif swipe_vec.x < -min_dist:
+#				animate(LEFT)
 
 
 func can_movef():
@@ -105,3 +105,10 @@ func _on_Tween_tween_completed(_object, _key):
 func _on_Tween_tween_started(_object, _key):
 #	tween_going = true
 	pass
+
+
+func _on_Touch_pressed(direction):
+	if map.showing:
+		return
+	animate(direction)
+	pass # Replace with function body.

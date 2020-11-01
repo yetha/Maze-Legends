@@ -42,7 +42,7 @@ func _on_Settings_pressed():
 	pass # Replace with function body.
 
 
-func _on_level_loaded():
+func _on_maze_loaded():
 	$Loading.hide()
 	tree.paused = true
 	pass # Replace with function body.
@@ -54,7 +54,7 @@ func _on_MapButton_pressed():
 	pass # Replace with function body.
 
 
-func _on_level_ended():
+func _on_maze_ended():
 	pause_button.hide()
 	map_button.hide()
 	pass # Replace with function body.

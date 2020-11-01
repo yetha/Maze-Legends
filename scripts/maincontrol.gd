@@ -3,9 +3,11 @@ extends Control
 onready var achvments = $AchievemntsPopup
 onready var settings = $Popups/Settings
 onready var quit = $QuitPopup
+onready var level = $Level
 
 
 func _ready():
+	level.text = "Level " + str(main.data["level"])
 	pass # Replace with function body.
 
 
@@ -47,8 +49,8 @@ func _on_Ach_OK_pressed():
 func _on_Ach_about_to_show():
 	var l = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/HBoxContainer/Label
 	var percent = 0
-	l.text = str(main.data["solves"]) + " - "
-	if main.data["levels"] > 0:
-		percent = stepify(float(main.data["solves"]) / float(main.data["levels"]), 0.01) * 100
+	l.text = str(main.data["solved"]) + " - "
+	if main.data["tried"] > 0:
+		percent = stepify(float(main.data["solved"]) / float(main.data["tried"]), 0.01) * 100
 	l.text += str(percent) + "%"
 	pass # Replace with function body.

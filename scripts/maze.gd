@@ -1,7 +1,7 @@
 extends Spatial
 
 var sizes = [9, 13, 17]
-var maze_width = sizes[main.size]
+var maze_width = main.size
 var step = 6
 var dirs = [Vector2.UP, Vector2.RIGHT,
 			Vector2.DOWN, Vector2.LEFT]
@@ -15,6 +15,9 @@ var maze_loops = []
 var try_success = false
 var rng = RandomNumberGenerator.new()
 var st_thread = Thread.new()
+
+var harcs = []
+var varcs = []
 
 onready var player = $Player
 onready var ground = $Ground
@@ -31,11 +34,12 @@ onready var wall = preload("res://wall.tscn")
 #onready var gnd = preload("res://ground.tscn")
 #onready var hedge = preload("res://resources/woodblock.mesh")
 
-signal level_loaded
-signal level_ended
+signal maze_loaded
+signal maze_ended
 
 
 func _ready():
+	maze_width = main.size
 	loading_ui.show()
 	starting(null)
 #	st_thread.start(self, "starting", null, 1)
@@ -43,18 +47,18 @@ func _ready():
 
 
 func starting(_userdata):
-	if not main.current_level["exists"]:
+	if not main.current_maze["exists"]:
 		rng.randomize()
-		main.current_level["exists"] = true
-		main.current_level["seed"] = rng.seed
-		main.current_level["size"] = main.size
-		main.data["levels"] += 1
+		main.current_maze["exists"] = true
+		main.current_maze["seed"] = rng.seed
+		main.current_maze["size"] = main.size
+		main.data["tried"] += 1
 	else:
-		rng.seed = main.current_level["seed"]
+		rng.seed = main.current_maze["seed"]
 	draw_grid()
 	def_maze()
 	build_maze()
-	timer.wait_time = maze_width * maze_width
+	timer.wait_time = maze_width * 4
 	player.starting()
 	om2d.starting()
 	map.starting()
@@ -65,16 +69,18 @@ func starting(_userdata):
 func join_thread():
 #	st_thread.wait_to_finish()
 	main.save_game_data()
-	emit_signal("level_loaded")
+	emit_signal("maze_loaded")
 
 
 func new():
-	main.wipe_current_level()
+	main.wipe_current_maze()
 	unvisited.clear()
 	hwalls.clear()
 	vwalls.clear()
 	ohwalls.clear()
 	ovwalls.clear()
+	harcs.clear()
+	varcs.clear()
 	path.clear()
 	maze_loops.clear()
 	try_success = false
@@ -94,7 +100,7 @@ func restart():
 	line.points = PoolVector2Array([])
 	try_success = false
 	map.starting()
-	emit_signal("level_loaded")
+	emit_signal("maze_loaded")
 	pass
 
 
@@ -104,6 +110,34 @@ func check_nbrs(cell):
 		if cell + dir in unvisited:
 			nbrs.append(cell + dir)
 	return nbrs
+
+
+func is_linked(wall_v, orientaton):
+	var connections = 0
+	match orientaton:
+		"h":
+			if (wall_v + Vector2(-1, 0) in hwalls + ohwalls
+			or wall_v + Vector2(0 ,-1) in vwalls + ovwalls
+			or wall_v in vwalls + ovwalls):
+				connections += 1
+			if (wall_v + Vector2(1, 0) in hwalls + ohwalls
+			or wall_v + Vector2(1 ,0) in vwalls + ovwalls
+			or wall_v + Vector2(1 ,-1) in (vwalls + ovwalls)):
+				connections += 1
+			pass
+		"v":
+			if (wall_v + Vector2(0, -1) in vwalls + ovwalls
+			or wall_v + Vector2(-1 ,0) in hwalls + ohwalls
+			or wall_v in hwalls + ohwalls):
+				connections += 1
+			if (wall_v + Vector2(0, 1) in vwalls + ovwalls
+			or wall_v + Vector2(0 ,1) in hwalls + ohwalls
+			or wall_v + Vector2(-1 ,1) in (hwalls + ohwalls)):
+				connections += 1
+			pass
+	if connections > 1:
+		return true
+	pass
 
 
 func draw_grid():
@@ -127,7 +161,7 @@ func draw_grid():
 
 
 func def_maze():
-	var current = Vector2(maze_width - 1, maze_width - 1)
+	var current = Vector2(randi() % maze_width, randi() % maze_width)
 	unvisited.erase(current)
 	print(current)
 	var stack = []
@@ -150,12 +184,19 @@ func def_maze():
 			unvisited.erase(current)
 		elif not stack.empty():
 			current = stack.pop_back()
-	var loops = int(maze_width / 8)
+	var loops = round((hwalls + vwalls).size() * 0.05)
 	var wall_arrs = [hwalls, vwalls]
-	while loops >= 0:
-		var rand_wall_arr = wall_arrs[rng.randi() % 2]
-		rand_wall_arr.erase(rand_wall_arr[rng.randi() % rand_wall_arr.size()])
-		loops -= 1
+	var arcs_arrs = [harcs, varcs]
+	var ori_arrs = ["h","v"]
+	print("LOOPS: ",loops)
+	while loops > 0:
+		var rand_id = rng.randi() % 2
+		var rand_arr = wall_arrs[rand_id]
+		var rand_wall = rand_arr[rng.randi() % rand_arr.size()]
+		if is_linked(rand_wall, ori_arrs[rand_id]):
+			rand_arr.erase(rand_wall)
+			arcs_arrs[rand_id].append(rand_wall)
+			loops -= 1
 
 
 func build_maze():
@@ -219,15 +260,15 @@ func _on_Finish_area_entered(area):
 	if area.name == "PArea":
 		yield(get_tree().create_timer(1), "timeout")
 		try_success = true
-		emit_signal("level_ended")
+		emit_signal("maze_ended")
 	pass # Replace with function body.
 
 
-#func _on_level_loaded():
+#func _on_maze_loaded():
 #	loading_ui.hide()
 #	pass # Replace with function body.
 
 
 func _on_Timer_timeout():
-	emit_signal("level_ended")
+	emit_signal("maze_ended")
 	pass # Replace with function body.

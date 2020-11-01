@@ -287,6 +287,13 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 enabled_focus_mode = 0
 text = "OK"
+
+[node name="Level" type="Label" parent="."]
+margin_right = 200.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 200, 80 )
+rect_scale = Vector2( 2, 2 )
+text = "Level 1"
 [connection signal="pressed" from="VBoxContainer/Play" to="." method="_on_Play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Achievements" to="." method="_on_Achievements_pressed"]
 [connection signal="pressed" from="VBoxContainer/Settings" to="." method="_on_Settings_pressed"]

@@ -7,12 +7,12 @@ onready var button = $"../HBoxContainer/Pause"
 func _notification(what):
 	if main.state != main.states.PLAYING:
 		return
-	if what == 6 or what == 7:#MainLoop constants back and quit
+	if what == 1006 or what == 1007:#MainLoop constants back and quit
 		if visible:
 			call_deferred("_on_Continue_pressed")
 		else:
 			call_deferred("_on_Pause_pressed")
-	if what == 4 or what == 5: #MainLoop constants focus in and out
+	if what == 1004 or what == 1005: #MainLoop constants focus in and out
 			call_deferred("_on_Pause_pressed")
 	pass
 
@@ -35,7 +35,7 @@ func _on_Continue_pressed():
 
 func _on_Restart_pressed():
 	tree.paused = false
-	main.current_level["fails"] += 1
+	main.current_maze["fails"] += 1
 	main.state = main.states.PLAYING
 	owner.restart()
 	hide()

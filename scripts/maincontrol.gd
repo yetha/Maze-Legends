@@ -4,11 +4,17 @@ onready var achvments = $AchievemntsPopup
 onready var settings = $Popups/Settings
 onready var quit = $QuitPopup
 onready var level = $Level
+onready var l = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/HBoxContainer/Label
 
 
 func _ready():
 	level.text = "Level " + str(main.data["level"])
 	pass # Replace with function body.
+
+
+func _notification(what):
+	if what == 1006 or what == 1007:#MainLoop constants back and quit
+			call_deferred("_on_Quit_pressed")
 
 
 func _on_Play_pressed():
@@ -47,10 +53,5 @@ func _on_Ach_OK_pressed():
 
 
 func _on_Ach_about_to_show():
-	var l = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/HBoxContainer/Label
-	var percent = 0
-	l.text = str(main.data["solved"]) + " - "
-	if main.data["tried"] > 0:
-		percent = stepify(float(main.data["solved"]) / float(main.data["tried"]), 0.01) * 100
-	l.text += str(percent) + "%"
+	l.text = str(main.data["solved"])
 	pass # Replace with function body.

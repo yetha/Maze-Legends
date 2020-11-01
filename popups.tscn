@@ -57,23 +57,12 @@ align = 1
 [node name="VBoxContainer" type="VBoxContainer" parent="Settings/VBoxContainer"]
 margin_top = 50.0
 margin_right = 552.0
-margin_bottom = 662.0
+margin_bottom = 657.0
 size_flags_vertical = 3
-
-[node name="Ads" type="CheckButton" parent="Settings/VBoxContainer/VBoxContainer"]
-margin_right = 552.0
-margin_bottom = 119.0
-rect_min_size = Vector2( 240, 80 )
-focus_mode = 0
-mouse_filter = 1
-size_flags_vertical = 3
-enabled_focus_mode = 0
-text = "Ads"
 
 [node name="Music" type="CheckButton" parent="Settings/VBoxContainer/VBoxContainer"]
-margin_top = 123.0
 margin_right = 552.0
-margin_bottom = 242.0
+margin_bottom = 148.0
 rect_min_size = Vector2( 240, 40 )
 focus_mode = 0
 mouse_filter = 1
@@ -82,9 +71,9 @@ enabled_focus_mode = 0
 text = "Music"
 
 [node name="Sound" type="CheckButton" parent="Settings/VBoxContainer/VBoxContainer"]
-margin_top = 246.0
+margin_top = 152.0
 margin_right = 552.0
-margin_bottom = 365.0
+margin_bottom = 300.0
 rect_min_size = Vector2( 240, 40 )
 focus_mode = 0
 mouse_filter = 1
@@ -93,9 +82,9 @@ enabled_focus_mode = 0
 text = "Sound"
 
 [node name="HowToPlay" type="Button" parent="Settings/VBoxContainer/VBoxContainer"]
-margin_top = 369.0
+margin_top = 304.0
 margin_right = 552.0
-margin_bottom = 488.0
+margin_bottom = 452.0
 rect_min_size = Vector2( 240, 40 )
 focus_mode = 0
 mouse_filter = 1
@@ -111,9 +100,9 @@ text = "How To Play"
 align = 0
 
 [node name="AboutButton" type="Button" parent="Settings/VBoxContainer/VBoxContainer"]
-margin_top = 492.0
+margin_top = 456.0
 margin_right = 552.0
-margin_bottom = 612.0
+margin_bottom = 607.0
 rect_min_size = Vector2( 240, 40 )
 focus_mode = 0
 mouse_filter = 1
@@ -130,7 +119,7 @@ align = 0
 
 [node name="OK" type="Button" parent="Settings/VBoxContainer"]
 margin_left = 236.0
-margin_top = 672.0
+margin_top = 667.0
 margin_right = 316.0
 margin_bottom = 712.0
 rect_min_size = Vector2( 80, 40 )

@@ -13,7 +13,7 @@ func draw_path():
 	prev_idx = 0
 	path_size = direct_path.size()
 	part = 1.0 / path_size
-	tween.interpolate_method(self, "move_path", 0, 1, 3.0, 1, 2)
+	tween.interpolate_method(self, "move_path", 0, 1, path_size * 0.1, 1, 2)
 	tween.start()
 
 

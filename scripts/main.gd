@@ -9,19 +9,16 @@ var size = SMALL
 var level_reqs = [0, 25, 50, 100, 200, 400, 800, 1600, 3200, 6400]
 #var level_reqs = [0, 1, 2, 3]
 var settings = {
-	"ads" : true,
 	"music" : true,
 	"sound" : true}
 var data = {
-	"tried" : 0,
 	"solved" : 0,
 	"level" : 1}
 var current_maze = {
 	"exists" : false,
 	"cleared" : false,
 	"size" : null,
-	"seed" : null,
-	"fails" : 0}
+	"seed" : null}
 
 onready var maze_scene = preload("res://maze.tscn")
 
@@ -77,8 +74,7 @@ func wipe_current_maze():
 	"exists" : false,
 	"cleared" : false,
 	"size" : null,
-	"seed" : null,
-	"fails" : 0}
+	"seed" : null}
 
 
 func save_game_data():

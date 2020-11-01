@@ -35,17 +35,8 @@ func _on_Continue_pressed():
 
 func _on_Restart_pressed():
 	tree.paused = false
-	main.current_maze["fails"] += 1
 	main.state = main.states.PLAYING
 	owner.restart()
-	hide()
-	pass # Replace with function body.
-
-
-func _on_Skip_pressed():
-	tree.paused = false
-	main.state = main.states.PLAYING
-	owner.new()
 	hide()
 	pass # Replace with function body.
 #
@@ -54,8 +45,3 @@ func _on_Skip_pressed():
 #	tree.paused = false
 #	hide()
 #	pass # Replace with function body.
-
-
-func _on_Settings_pressed():
-	get_parent().move_child(self, 0)
-	pass # Replace with function body.

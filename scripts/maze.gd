@@ -12,7 +12,6 @@ var ohwalls = []
 var ovwalls = []
 var path = []
 var maze_loops = []
-var try_success = false
 var rng = RandomNumberGenerator.new()
 var st_thread = Thread.new()
 
@@ -27,7 +26,6 @@ onready var line = $MapVP/World2D/Path
 onready var fin_area = $Finish
 onready var loading_ui = $UI/Loading
 onready var map = $UI/Map
-onready var timer = $Timer
 
 
 onready var wall = preload("res://wall.tscn")
@@ -52,13 +50,11 @@ func starting(_userdata):
 		main.current_maze["exists"] = true
 		main.current_maze["seed"] = rng.seed
 		main.current_maze["size"] = main.size
-		main.data["tried"] += 1
 	else:
 		rng.seed = main.current_maze["seed"]
 	draw_grid()
 	def_maze()
 	build_maze()
-	timer.wait_time = maze_width * 4
 	player.starting()
 	om2d.starting()
 	map.starting()
@@ -83,7 +79,6 @@ func new():
 	varcs.clear()
 	path.clear()
 	maze_loops.clear()
-	try_success = false
 	get_child(0).get_child(0).queue_free()
 	om2d.get_child(0).get_child(0).queue_free()
 	line.get_child(0).stop_all()
@@ -98,7 +93,6 @@ func restart():
 	player.starting()
 	line.get_child(0).stop_all()
 	line.points = PoolVector2Array([])
-	try_success = false
 	map.starting()
 	emit_signal("maze_loaded")
 	pass
@@ -259,7 +253,6 @@ func player_moved(location):
 func _on_Finish_area_entered(area):
 	if area.name == "PArea":
 		yield(get_tree().create_timer(1), "timeout")
-		try_success = true
 		emit_signal("maze_ended")
 	pass # Replace with function body.
 
@@ -267,8 +260,3 @@ func _on_Finish_area_entered(area):
 #func _on_maze_loaded():
 #	loading_ui.hide()
 #	pass # Replace with function body.
-
-
-func _on_Timer_timeout():
-	emit_signal("maze_ended")
-	pass # Replace with function body.

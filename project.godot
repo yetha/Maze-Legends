@@ -23,6 +23,8 @@ _global_script_class_icons={
 config/name="Maze Legends"
 run/main_scene="res://home.tscn"
 config/icon="res://icon.png"
+config/auto_accept_quit=false
+config/quit_on_go_back=false
 
 [autoload]
 

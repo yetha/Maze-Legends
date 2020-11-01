@@ -13,6 +13,7 @@ onready var wall_res = preload("res://wall2d.tscn")
 
 func _ready():
 	position = step
+	loctr.hide()
 	pass
 
 

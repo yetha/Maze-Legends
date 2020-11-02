@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://scripts/maze.gd" type="Script" id=1]
 [ext_resource path="res://textures/loading.png" type="Texture" id=2]
@@ -17,12 +17,6 @@
 [sub_resource type="BoxShape" id=1]
 
 [sub_resource type="PrismMesh" id=2]
-
-[sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 120, 560 )
-
-[sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 80, 560 )
 
 [sub_resource type="PlaneMesh" id=5]
 
@@ -45,9 +39,9 @@ tracks/0/keys = {
 "values": [ 0.0, 360.0 ]
 }
 
-[sub_resource type="StyleBoxFlat" id=10]
+[sub_resource type="StyleBoxFlat" id=9]
 
-[sub_resource type="GDScript" id=11]
+[sub_resource type="GDScript" id=10]
 script/source = "extends Label
 
 
@@ -65,13 +59,13 @@ func _process(_delta):
 	pass
 "
 
+[sub_resource type="ViewportTexture" id=11]
+viewport_path = NodePath("MapVP")
+
 [sub_resource type="ViewportTexture" id=12]
 viewport_path = NodePath("MapVP")
 
 [sub_resource type="ViewportTexture" id=13]
-viewport_path = NodePath("MapVP")
-
-[sub_resource type="ViewportTexture" id=14]
 viewport_path = NodePath("MapVP")
 
 [node name="GameWorld" type="Spatial"]
@@ -102,20 +96,6 @@ shape = SubResource( 1 )
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 4.37114e-08, 0, -1 )
 mesh = SubResource( 2 )
 material/0 = null
-
-[node name="Input" type="Node2D" parent="."]
-
-[node name="Forward" type="TouchScreenButton" parent="Input"]
-position = Vector2( 240, 80 )
-shape = SubResource( 3 )
-
-[node name="Left" type="TouchScreenButton" parent="Input"]
-position = Vector2( 0, 80 )
-shape = SubResource( 4 )
-
-[node name="Right" type="TouchScreenButton" parent="Input"]
-position = Vector2( 560, 80 )
-shape = SubResource( 4 )
 
 [node name="Ground" type="MeshInstance" parent="."]
 mesh = SubResource( 5 )
@@ -207,6 +187,50 @@ __meta__ = {
 autoplay = "loading"
 anims/loading = SubResource( 8 )
 
+[node name="MarginContainer" type="MarginContainer" parent="UI"]
+visible = false
+modulate = Color( 1, 1, 1, 0.160784 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_top = 80
+custom_constants/margin_bottom = 80
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainer"]
+margin_top = 80.0
+margin_right = 720.0
+margin_bottom = 1200.0
+custom_constants/separation = 80
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Left" type="Button" parent="UI/MarginContainer/HBoxContainer"]
+margin_right = 160.0
+margin_bottom = 1120.0
+rect_min_size = Vector2( 160, 0 )
+size_flags_horizontal = 3
+shortcut_in_tooltip = false
+expand_icon = true
+
+[node name="Forward" type="Button" parent="UI/MarginContainer/HBoxContainer"]
+margin_left = 240.0
+margin_right = 480.0
+margin_bottom = 1120.0
+rect_min_size = Vector2( 240, 0 )
+size_flags_horizontal = 3
+shortcut_in_tooltip = false
+
+[node name="Right" type="Button" parent="UI/MarginContainer/HBoxContainer"]
+margin_left = 560.0
+margin_right = 720.0
+margin_bottom = 1120.0
+rect_min_size = Vector2( 160, 0 )
+size_flags_horizontal = 3
+shortcut_in_tooltip = false
+
 [node name="HBoxContainer" type="HBoxContainer" parent="UI"]
 anchor_right = 1.0
 margin_bottom = 80.0
@@ -234,10 +258,10 @@ margin_top = 10.0
 margin_right = 500.0
 margin_bottom = 70.0
 rect_min_size = Vector2( 140, 60 )
-custom_styles/normal = SubResource( 10 )
+custom_styles/normal = SubResource( 9 )
 align = 1
 valign = 1
-script = SubResource( 11 )
+script = SubResource( 10 )
 
 [node name="Map" type="TextureRect" parent="UI"]
 anchor_left = 0.5
@@ -250,7 +274,7 @@ margin_right = 280.0
 margin_bottom = 280.0
 rect_min_size = Vector2( 560, 560 )
 mouse_filter = 0
-texture = SubResource( 12 )
+texture = SubResource( 11 )
 expand = true
 script = ExtResource( 13 )
 __meta__ = {
@@ -394,8 +418,8 @@ __meta__ = {
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 556.0
-margin_bottom = 724.0
-rect_min_size = Vector2( 0, 720 )
+margin_bottom = 804.0
+rect_min_size = Vector2( 0, 800 )
 custom_constants/separation = 40
 alignment = 1
 __meta__ = {
@@ -410,21 +434,42 @@ mouse_filter = 1
 text = "Cleared"
 align = 1
 
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/ClearPopup/VBoxCont"]
+margin_left = 35.0
+margin_top = 99.0
+margin_right = 515.0
+margin_bottom = 139.0
+rect_min_size = Vector2( 480, 40 )
+size_flags_horizontal = 4
+
+[node name="Level" type="Label" parent="UI/ClearPopup/VBoxCont/HBoxContainer2"]
+margin_right = 80.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 80, 0 )
+text = "Lv10"
+
+[node name="Progress" type="ProgressBar" parent="UI/ClearPopup/VBoxCont/HBoxContainer2"]
+margin_left = 84.0
+margin_right = 480.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+
 [node name="ClearedMap" type="TextureRect" parent="UI/ClearPopup/VBoxCont"]
 margin_left = 36.0
-margin_top = 99.0
+margin_top = 179.0
 margin_right = 516.0
-margin_bottom = 579.0
+margin_bottom = 659.0
 rect_min_size = Vector2( 480, 480 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = SubResource( 13 )
+texture = SubResource( 12 )
 expand = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI/ClearPopup/VBoxCont"]
-margin_top = 619.0
+margin_top = 699.0
 margin_right = 552.0
-margin_bottom = 699.0
+margin_bottom = 779.0
 alignment = 1
 
 [node name="Next" type="Button" parent="UI/ClearPopup/VBoxCont/HBoxContainer"]
@@ -464,21 +509,21 @@ margin_bottom = -1.0
 visible = false
 margin_right = 256.0
 margin_bottom = 256.0
-texture = SubResource( 14 )
+texture = SubResource( 13 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="maze_ended" from="." to="UI/ClearPopup" method="_on_maze_ended"]
-[connection signal="maze_ended" from="." to="UI" method="_on_maze_ended"]
 [connection signal="maze_ended" from="." to="MapVP/World2D/Path" method="_on_maze_ended"]
+[connection signal="maze_ended" from="." to="UI" method="_on_maze_ended"]
+[connection signal="maze_ended" from="." to="UI/ClearPopup" method="_on_maze_ended"]
 [connection signal="maze_loaded" from="." to="UI" method="_on_maze_loaded"]
 [connection signal="tween_completed" from="Player/Tween" to="Player" method="_on_Tween_tween_completed"]
 [connection signal="tween_started" from="Player/Tween" to="Player" method="_on_Tween_tween_started"]
-[connection signal="pressed" from="Input/Forward" to="Player" method="_on_Touch_pressed" binds= [ 0 ]]
-[connection signal="pressed" from="Input/Left" to="Player" method="_on_Touch_pressed" binds= [ 1 ]]
-[connection signal="pressed" from="Input/Right" to="Player" method="_on_Touch_pressed" binds= [ 2 ]]
 [connection signal="area_entered" from="Finish" to="." method="_on_Finish_area_entered"]
+[connection signal="pressed" from="UI/MarginContainer/HBoxContainer/Left" to="Player" method="_on_Touch_pressed" binds= [ 1 ]]
+[connection signal="pressed" from="UI/MarginContainer/HBoxContainer/Forward" to="Player" method="_on_Touch_pressed" binds= [ 0 ]]
+[connection signal="pressed" from="UI/MarginContainer/HBoxContainer/Right" to="Player" method="_on_Touch_pressed" binds= [ 2 ]]
 [connection signal="pressed" from="UI/HBoxContainer/Pause" to="UI/PausePopup" method="_on_Pause_pressed"]
 [connection signal="pressed" from="UI/MapButton" to="UI/Map" method="_on_MapButton_pressed"]
 [connection signal="about_to_show" from="UI/PausePopup" to="UI/Map" method="_on_PausePopup_about_to_show"]

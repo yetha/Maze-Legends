@@ -3,12 +3,13 @@ extends Control
 onready var achvments = $AchievemntsPopup
 onready var settings = $Popups/Settings
 onready var quit = $QuitPopup
-onready var level = $Level
-onready var l = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/HBoxContainer/Label
+onready var s = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/Solves
+onready var l = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/VBoxContainer/VBoxContainer/Level
+onready var p = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/VBoxContainer/VBoxContainer/Progress
 
 
 func _ready():
-	level.text = "Level " + str(main.data["level"])
+	print(OS.get_screen_dpi(), " DPI")
 	pass # Replace with function body.
 
 
@@ -53,5 +54,10 @@ func _on_Ach_OK_pressed():
 
 
 func _on_Ach_about_to_show():
-	l.text = str(main.data["solved"])
+	var progress = main.progression()
+	if progress != null:
+		p.max_value = progress.y
+		p.value = progress.x
+	s.text = str(main.data["solved"])
+	l.text = "Lv" + str(main.data["level"])
 	pass # Replace with function body.

@@ -247,6 +247,7 @@ func player_moved(location):
 	build_collis(coors)
 	addto_path(coors)
 	om2d.update_place(coors)
+	map.update_moves()
 	pass
 
 

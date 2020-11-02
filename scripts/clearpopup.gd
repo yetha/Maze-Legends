@@ -2,6 +2,8 @@ extends PopupPanel
 
 onready var tree = get_tree()
 onready var level_ui = get_parent()
+onready var l = $VBoxCont/HBoxContainer2/Level
+onready var p = $VBoxCont/HBoxContainer2/Progress
 
 
 func _notification(what):
@@ -11,11 +13,16 @@ func _notification(what):
 
 
 func _on_maze_ended():
+	var progress
 	main.data["solved"] += 1
 	main.current_maze["cleared"] = true
-	main.progression()
+	progress = main.progression()
 	main.state = main.states.CLEARED
 	tree.paused = true
+	l.text = "Lv" + str(main.data["level"])
+	if progress != null:
+		p.max_value = progress.y
+		p.value = progress.x
 	main.wipe_current_maze()
 	main.save_game_data()
 	popup_centered()

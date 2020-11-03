@@ -108,7 +108,5 @@ func _on_Tween_tween_started(_object, _key):
 
 
 func _on_Touch_pressed(direction):
-#	if map.showing:
-#		return
 	animate(direction)
 	pass # Replace with function body.

@@ -157,7 +157,6 @@ func draw_grid():
 func def_maze():
 	var current = Vector2(randi() % maze_width, randi() % maze_width)
 	unvisited.erase(current)
-	print(current)
 	var stack = []
 	while not unvisited.empty():
 		var nbrs = check_nbrs(current)
@@ -182,7 +181,7 @@ func def_maze():
 	var wall_arrs = [hwalls, vwalls]
 	var arcs_arrs = [harcs, varcs]
 	var ori_arrs = ["h","v"]
-	print("LOOPS: ",loops)
+#	print("LOOPS: ",loops)
 	while loops > 0:
 		var rand_id = rng.randi() % 2
 		var rand_arr = wall_arrs[rand_id]

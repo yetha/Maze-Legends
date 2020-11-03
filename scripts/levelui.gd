@@ -2,7 +2,6 @@ extends Control
 
 onready var tree = get_tree()
 onready var pause_button = $HBoxContainer/Pause
-onready var settings = $Popups/Settings
 onready var map = $Map
 onready var map_button = $MapButton
 

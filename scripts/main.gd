@@ -1,6 +1,5 @@
 extends Node
 
-
 enum states {HOME, LOADING, PLAYING, PAUSED, CLEARED}
 enum {SMALL, MEDIUM, LARGE}
 
@@ -45,10 +44,7 @@ func _input(event):
 
 
 func set_size():
-	if false:#current_maze["exists"]:
-		size = current_maze["size"]
-	else:
-		size = 7 + (data["level"] * 2)
+	size = 7 + (data["level"] * 2)
 	pass
 
 
@@ -98,5 +94,5 @@ func load_game_data():
 	data = save[1]#parse_json(data_file.get_line())
 #	var line = data_file.get_line()
 	current_maze = save[2]#parse_json(line)
-	print("Save: ", save)
+#	print("Save: ", save)
 	data_file.close()

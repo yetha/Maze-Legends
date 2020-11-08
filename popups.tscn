@@ -384,6 +384,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 enabled_focus_mode = 0
 text = "OK"
+[connection signal="popup_hide" from="Settings" to="Settings" method="_on_Settings_popup_hide"]
 [connection signal="pressed" from="Settings/VBoxContainer/VBoxContainer/HowToPlay" to="." method="_on_HowToPlay_pressed"]
 [connection signal="pressed" from="Settings/VBoxContainer/VBoxContainer/AboutButton" to="." method="_on_AboutButton_pressed"]
 [connection signal="pressed" from="Settings/VBoxContainer/OK" to="." method="_on_OK_pressed" binds= [ 0 ]]

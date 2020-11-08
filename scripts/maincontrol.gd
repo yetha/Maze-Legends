@@ -9,7 +9,6 @@ onready var p = $AchievemntsPopup/VBoxContainer/VBoxContainer/PanelContainer/VBo
 
 
 func _ready():
-	print(OS.get_screen_dpi(), " DPI")
 	pass # Replace with function body.
 
 
@@ -58,6 +57,6 @@ func _on_Ach_about_to_show():
 	if progress != null:
 		p.max_value = progress.y
 		p.value = progress.x
-	s.text = str(main.data["solved"])
+	s.text = str(main.data["solved"]) + "*** dpi " + str(OS.get_screen_dpi())
 	l.text = "Lv" + str(main.data["level"])
 	pass # Replace with function body.

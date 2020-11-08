@@ -10,9 +10,8 @@ func _ready():
 	pass
 
 
-func _on_SettingsPopup_popup_hide():
+func _on_Settings_popup_hide():
 	main.settings["music"] = music.pressed
 	main.settings["sound"] = sound.pressed
 	main.save_game_data()
-	pass
-
+	pass # Replace with function body.

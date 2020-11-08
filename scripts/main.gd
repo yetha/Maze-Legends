@@ -1,6 +1,5 @@
 extends Node
 
-
 enum states {HOME, LOADING, PLAYING, PAUSED, CLEARED}
 enum {SMALL, MEDIUM, LARGE}
 

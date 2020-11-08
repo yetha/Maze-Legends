@@ -1,6 +1,5 @@
 extends Spatial
 
-var sizes = [9, 13, 17]
 var maze_width = main.size
 var step = 6
 var dirs = [Vector2.UP, Vector2.RIGHT,

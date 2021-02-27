@@ -70,6 +70,9 @@ func update_moves():
 func _on_MapButton_pressed():
 	tree.paused = false
 	toggle_map()
+	if button.text == "START":
+		owner.start_game()
+		pass
 	button.text = "MAP"
 	main.state = main.states.PLAYING
 

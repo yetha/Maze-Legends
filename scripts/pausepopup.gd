@@ -12,8 +12,8 @@ func _notification(what):
 			call_deferred("_on_Continue_pressed")
 		else:
 			call_deferred("_on_Pause_pressed")
-	if what == 1004 or what == 1005: #MainLoop constants focus in and out
-			call_deferred("_on_Pause_pressed")
+#	if what == 1004 or what == 1005: #MainLoop constants focus in and out
+#			call_deferred("_on_Pause_pressed")
 	pass
 
 

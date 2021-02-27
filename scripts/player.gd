@@ -18,6 +18,7 @@ onready var path = owner.path
 
 
 func _ready():
+	set_process_unhandled_input(false)
 	pass
 
 
@@ -26,7 +27,7 @@ func starting():
 	rotation.y = 0
 	translation = Vector3((maze_width / 2 + 0.5) * step, 0, (maze_width + 0.5) * step)
 	owner.player_moved(Vector2(translation.x, translation.z))
-	set_process_unhandled_input(true)
+	
 	tween_going = false
 	scnd_ani = false
 	tween.stop_all()

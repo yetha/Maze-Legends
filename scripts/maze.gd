@@ -19,17 +19,20 @@ var harcs = []
 var varcs = []
 
 onready var player = $Player
-onready var ground = $Ground
+#onready var ground = $Ground
 onready var colls = $Colliders
 onready var om2d = $MapVP/World2D
 onready var line = $MapVP/World2D/Path
-onready var fin_area = $Finish
 onready var loading_ui = $UI/Loading
 onready var map = $UI/Map
+onready var door1 = $Door
+onready var door2 = $Door2
 
 
 onready var wall = preload("res://wall.tscn")
-#onready var gnd = preload("res://ground.tscn")
+onready var column = preload("res://column.tscn")
+onready var arc = preload("res://arch.tscn")
+onready var ground = preload("res://ground.tscn")
 #onready var hedge = preload("res://resources/woodblock.mesh")
 
 signal maze_loaded
@@ -39,8 +42,10 @@ signal maze_ended
 func _ready():
 	maze_width = main.size
 	loading_ui.show()
-	starting(null)
-#	st_thread.start(self, "starting", null, 1)
+	door1.show()
+	door2.show()
+#	starting(null)
+	st_thread.start(self, "starting", null, 1)
 	pass
 
 
@@ -63,7 +68,7 @@ func starting(_userdata):
 
 
 func join_thread():
-#	st_thread.wait_to_finish()
+	st_thread.wait_to_finish()
 	main.save_game_data()
 	emit_signal("maze_loaded")
 
@@ -194,10 +199,22 @@ func def_maze():
 
 func build_maze():
 	var maze = Spatial.new()
-	ground.translation.x = float(maze_width) / 2 * step
-	ground.translation.z = ground.translation.x
-	ground.mesh.size.x = (maze_width + 1) * step
-	ground.mesh.size.y = ground.mesh.size.x
+#	ground.translation.x = float(maze_width) / 2 * step
+#	ground.translation.z = ground.translation.x
+#	ground.mesh.size.x = (maze_width + 1) * step
+#	ground.mesh.size.y = ground.mesh.size.x
+	for x in range(-1 , maze_width):
+		for y in range(-1 , maze_width):
+			var ground_i = ground.instance()
+			maze.add_child(ground_i)
+			ground_i.translation = Vector3(x * step, 0, y * step)
+	for x in maze_width + 1:
+		for y in maze_width + 1:
+			if not Vector2(x, y) in [Vector2(maze_width/2,0), Vector2((maze_width/2)+1,0), 
+			Vector2(maze_width/2,maze_width), Vector2((maze_width/2)+1,maze_width)]:
+				var column_i = column.instance()
+				maze.add_child(column_i)
+				column_i.translation = Vector3(x * step, 0, y * step)
 	for wall_coor in hwalls + ohwalls:
 		var wall_i = wall.instance()
 		maze.add_child(wall_i)
@@ -207,24 +224,35 @@ func build_maze():
 		maze.add_child(wall_i)
 		wall_i.translation = Vector3(wall_coor.x * step, 0, wall_coor.y * step)
 		wall_i.rotation.y = -PI / 2
+	for arc_coor in harcs:
+		var arc_i = arc.instance()
+		maze.add_child(arc_i)
+		arc_i.translation = Vector3(arc_coor.x * step, 0, arc_coor.y * step)
+	for arc_coor in varcs:
+		var arc_i = arc.instance()
+		maze.add_child(arc_i)
+		arc_i.translation = Vector3(arc_coor.x * step, 0, arc_coor.y * step)
+		arc_i.rotation.y = -PI / 2
 	get_child(0).call_deferred("add_child", maze)
-	fin_area.translation = Vector3((maze_width / 2 + 0.5) * step, 1, -0.5 * step)
+	door1.translation = Vector3((maze_width / 2 + 0.5) * step, 0, maze_width * step)
+	door2.translation = Vector3((maze_width / 2 + 0.5) * step, 0, 0)
 
 
 func build_collis(coors):
-	var arr_colls = colls.get_children()
-	for wall in [coors, coors + Vector2(0, 1)]:
-		if wall in hwalls + ohwalls:
-			arr_colls[0].translation = Vector3(wall.x * step, 0, wall.y * step)
-			arr_colls[0].rotation.y = 0
-			arr_colls.remove(0)
-	for wall in [coors, coors + Vector2(1, 0)]:
-		if wall in vwalls + ovwalls:
-			arr_colls[0].translation = Vector3(wall.x * step, 0, wall.y * step)
-			arr_colls[0].rotation.y = -PI / 2
-			arr_colls.remove(0)
-	for col in arr_colls:
-		col.translation.y = -10
+	pass
+#	var arr_colls = colls.get_children()
+#	for wall in [coors, coors + Vector2(0, 1)]:
+#		if wall in hwalls + ohwalls:
+#			arr_colls[0].translation = Vector3(wall.x * step, 0, wall.y * step)
+#			arr_colls[0].rotation.y = 0
+#			arr_colls.remove(0)
+#	for wall in [coors, coors + Vector2(1, 0)]:
+#		if wall in vwalls + ovwalls:
+#			arr_colls[0].translation = Vector3(wall.x * step, 0, wall.y * step)
+#			arr_colls[0].rotation.y = -PI / 2
+#			arr_colls.remove(0)
+#	for col in arr_colls:
+#		col.translation.y = -10
 
 
 func addto_path(coors):
@@ -250,10 +278,25 @@ func player_moved(location):
 	pass
 
 
+func start_game():
+	door1.open()
+	yield(get_tree().create_timer(2), "timeout")
+	player.animate(0)
+#	door1.close()
+#	door1.get_node("StaticBody/CollisionShape").disabled = false
+	player.set_process_unhandled_input(true)
+	pass
+
+
 func _on_Finish_area_entered(area):
+	player.set_process_unhandled_input(false)
+	player.scnd_ani = false
 	if area.name == "PArea":
+		door2.open()
+		yield(get_tree().create_timer(2), "timeout")
+		player.animate(0)
 		yield(get_tree().create_timer(1), "timeout")
-		emit_signal("maze_ended")
+#		emit_signal("maze_ended")
 	pass # Replace with function body.
 
 
